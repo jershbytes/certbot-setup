@@ -24,9 +24,18 @@ function certbot_installer {
 }
 
 function create_cloudflare_ini {
+    # Create the directory structure first
+    sudo mkdir -p /root/.secrets/certbot
+    
     read -rp "Enter your Cloudflare token: " CLOUDFLARE_API_KEY
-    echo "dns_cloudflare_api_key = $CLOUDFLARE_API_KEY" >> /root/.secrets/certbot/cloudflare.ini
-    chmod 600 /root/.secrets/certbot/cloudflare.ini
+    
+    # Write to the file with sudo
+    echo "dns_cloudflare_api_token = $CLOUDFLARE_API_KEY" | sudo tee /root/.secrets/certbot/cloudflare.ini > /dev/null
+    
+    # Set proper permissions
+    sudo chmod 600 /root/.secrets/certbot/cloudflare.ini
+    
+    echo "Cloudflare configuration saved to /root/.secrets/certbot/cloudflare.ini"
 }
 
 if [ -f /etc/debian_version ]; then
